@@ -1,0 +1,33 @@
+- hosts : master
+  tasks : 
+  - name : copying wordpress file
+    copy :
+            src : "wordpress.yaml"
+            dest : "/root/wordpress.yaml"
+  
+  - name : copying database file
+    copy :
+            src : "database.yaml"
+            dest : "/root/database.yaml"
+  
+  - name : copying service file
+    copy :
+            src : "service.yaml"
+            dest : "/root/service.yaml"
+  - name : copying svcdb file
+    copy :
+            src : "svcdb.yaml"
+            dest : "/root/svcdb.yaml"
+
+  - name : creating database deployment
+    shell: "kubectl apply -f /root/database.yaml"
+
+  - name : creating wordpress deployment
+    shell: "kubectl apply -f /root/wordpress.yaml"
+  
+  - name : expose wordpress on server
+    shell: "kubectl apply -f /root/service.yaml"
+    
+  - name : expose database server
+    shell : "kubectl apply -f /root/svcdb.yaml"
+

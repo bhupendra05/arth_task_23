@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "mydatabase1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: db
+  template:
+    metadata:
+      name: "mydatabase1"
+      labels:
+        env: db
+    spec:
+      containers:
+      - name: "mydatabase1"
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: bhupendra
+        - name: MYSQL_USER
+          value: bhupendra
+        - name: MYSQL_PASSWORD
+          value: bhupendra
+        - name: MYSQL_DATABASE
+          value: master

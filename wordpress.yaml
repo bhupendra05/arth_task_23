@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "mywordpress1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: prod
+  template:
+    metadata:
+      name: "wordpress"
+      labels:
+        env: prod
+    spec:
+      containers:
+      - name: "wordpress1"
+        image: wordpress:5.1.1-php7.3-apache

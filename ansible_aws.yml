@@ -1,0 +1,74 @@
+- hosts : localhost
+  vars_prompt : 
+    - name : a1
+      prompt : Enter Your Master Instance Name
+      private : no
+    - name : b1
+      prompt : Enter Your Slave1 Instance Name
+      private : no
+    - name : c1
+      prompt : Enter Your Slave2 Instance Name
+      private : no
+
+  tasks : 
+  - name : install boto3 
+    pip : 
+        name : boto3
+  - ec2_instance : 
+        region : ap-south-1
+        image_id : ami-081bb417559035fe8
+        instance_type : t2.micro
+        vpc_subnet_id : subnet-86c8b7ca
+        security_group : sg-04a8e975ac68dee00
+        key_name : awsclass2020-1stkey
+        name : "{{a1}}"
+        state : present
+        aws_access_key : *****************
+        aws_secret_key : ********************************
+        wait : true
+        wait_timeout : 600
+    register : a
+  - debug : 
+        var : a.instances[0].public_ip_address
+  - ec2_instance :
+        region : ap-south-1
+        image_id : ami-081bb417559035fe8
+        instance_type : t2.micro
+        vpc_subnet_id : subnet-86c8b7ca
+        security_group : sg-04a8e975ac68dee00
+        key_name : awsclass2020-1stkey
+        name : "{{b1}}"
+        state : present
+        aws_access_key :*****************
+        aws_secret_key : ********************************
+        wait : true
+        wait_timeout : 600
+    register : b
+  - debug :
+        var : b.instances[0].public_ip_address
+  - ec2_instance :
+        region : ap-south-1
+        image_id : ami-081bb417559035fe8
+        instance_type : t2.micro
+        vpc_subnet_id : subnet-86c8b7ca
+        security_group : sg-04a8e975ac68dee00
+        key_name : awsclass2020-1stkey
+        name : "{{c1}}"
+        state : present
+        aws_access_key :*****************
+        aws_secret_key : ********************************
+        wait : true
+        wait_timeout : 600
+    register : c
+  - debug :
+        var : c.instances[0].public_ip_address
+  - name : update inventory file
+    blockinfile :
+            path : /root/ip.txt
+            block : |
+                    [master]
+                    {{a.instances[0].public_ip_address}} ansible_user=ec2-user ansible_ssh_private_key_file=/root/awsclass2020-1stkey.pem ansible_connection=ssh
+                    [slave]
+                    {{b.instances[0].public_ip_address}} ansible_user=ec2-user ansible_ssh_private_key_file=/root/awsclass2020-1stkey.pem ansible_connection=ssh
+                    {{c.instances[0].public_ip_address}} ansible_user=ec2-user ansible_ssh_private_key_file=/root/awsclass2020-1stkey.pem ansible_connection=ssh
+

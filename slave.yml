@@ -1,0 +1,18 @@
+---
+ - hosts : master
+   tasks : 
+      - name : create token
+        shell : "kubeadm token create --print-join-command"
+        register : token
+      - debug :
+              var : token['stdout']
+      - add_host :
+              name : "jointoken"
+              link : "{{ token['stdout'] }}"
+ - hosts : slave
+   roles :
+      - role : slave
+   tasks :
+      - name : "join token"
+        shell : "{{ hostvars['jointoken']['link'] }}"
+        ignore_errors : yes
